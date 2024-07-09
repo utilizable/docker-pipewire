@@ -8,12 +8,13 @@
 
 FROM ghcr.io/utilizable/docker-fakeroot:1.1.0
 
-LABEL description="Ubuntu pipewire docker container" \
-      maintainer="Utilizable http://github.com/utilizable"
-
-ARG PULSEAUDIO_TCP_PORT=4713
-
+# Labels
 # ---
+
+LABEL description="Ubuntu pipewire docker container" \
+      maintainer="Utilizable http://github.com/utilizable" \
+      org.opencontainers.image.source="https://github.com/utilizable/docker-pipewire"
+
 # PipeWire and WirePlumber 
 # ---
 
@@ -70,8 +71,7 @@ RUN apt-get update && \
     # Create directory for user specyfic pipewire configuration
     mkdir /usr/share/pipewire/pipewire.conf.d/ 
 
-# ---
-# COPY 
+# Copy 
 # ---
 
 COPY ./config/supervisord.conf \
@@ -80,7 +80,6 @@ COPY ./config/supervisord.conf \
 COPY ./config/module_protocol_pulse.conf \
       /usr/share/pipewire/pipewire.conf.d/module_protocol_pulse.conf
 
-# ---
 # Setup 
 # ---
 
@@ -91,7 +90,6 @@ ENV PIPEWIRE_LATENCY="32/48000" \
     PIPEWIRE_RUNTIME_DIR="/tmp/" \
     PULSE_RUNTIME_PATH="/tmp/"
 
-# ---
 # Execute 
 # ---
 
