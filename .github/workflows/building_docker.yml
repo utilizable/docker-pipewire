@@ -10,6 +10,12 @@ on:
   # Trigger major on default ref;
   workflow_dispatch:
 
+# Allow repository modyfication;
+permissions:
+  contents: write
+  pull-requests: write
+  packages: write
+
 jobs:
 
   # -----------------
