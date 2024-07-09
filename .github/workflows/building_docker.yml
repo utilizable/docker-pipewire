@@ -1,0 +1,60 @@
+# building.yml
+name: Building Docker
+
+on:
+  # Trigger on each tag-push;
+  push:
+    tags:
+      - '*'
+
+  # Trigger major on default ref;
+  workflow_dispatch:
+
+jobs:
+
+  # -----------------
+  # Prepare
+  # -----------------
+  prepare:
+    name: "Build: Prepare"
+    runs-on: ubuntu-latest
+    outputs:
+      dockerfilepath: ${{ steps.find-dockerfile.outputs.DOCKERFILE_PATH }}
+    steps:
+      - uses: actions/checkout@v4
+
+      # Find Dockerfile
+      - shell: bash
+        name: Find Dockerfile
+        id: find-dockerfile
+        run: |
+          DOCKERFILE_PATH=$(find ${PWD} -name "Dockerfile") && \
+          if [ -z "$DOCKERFILE_PATH" ]; then exit 1; fi && \
+          echo "${DOCKERFILE_PATH}" && \
+          echo "DOCKERFILE_PATH=${DOCKERFILE_PATH}" >> $GITHUB_OUTPUT
+
+  # -----------------
+  # Docker linter
+  # -----------------
+  hadolint:
+     needs: [ prepare ]
+     name: "Lint: Dockerfile"
+     runs-on: ubuntu-latest
+     steps:
+       - uses: utilizable/action-store/.github/actions/linting/docker/hadolint@develop
+         with:
+           file: ${{ needs.prepare.outputs.dockerfilepath }}
+  
+  # -----------------
+  # Building & Pushing to Github registry 
+  # -----------------
+  github:
+    name: "Build: Github Package"
+    needs: [ hadolint ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: utilizable/github-actions/.github/actions/building/docker/github@develop
+        with:
+          token: ${{ secrets.token || github.token }}
+          context: ./build
+          file: ${{ needs.prepare.outputs.dockerfilepath }}
