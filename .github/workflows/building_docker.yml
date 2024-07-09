@@ -61,6 +61,6 @@ jobs:
     steps:
       - uses: utilizable/github-actions/.github/actions/building/docker/github@develop
         with:
-          token: ${{ secrets.token || secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           context: ./build
           file: ${{ needs.prepare.outputs.dockerfilepath }}
