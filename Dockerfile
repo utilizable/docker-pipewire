@@ -6,8 +6,7 @@
 # ├─utilizable/docker-fakeroot
 #   ├─utilizable/docker-pipewire
 
-ARG DISTRIBUTION=24.04
-FROM ghcr.io/utilizable/docker-fakeroot:latest
+FROM ghcr.io/utilizable/docker-fakeroot:1.0.0
 
 LABEL description="Ubuntu pipewire docker container" \
       maintainer="Utilizable http://github.com/utilizable"
@@ -23,15 +22,18 @@ RUN apt-get update && \
         software-properties-common \
         curl && \
 
-    mkdir -pm755 /etc/apt/trusted.gpg.d && \
+    mkdir -p /etc/apt/trusted.gpg.d && \
+    chmod 0755 /etc/apt/trusted.gpg.d && \
     curl -fsSL "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xFC43B7352BCC0EC8AF2EEB8B25088A0359807596" | \
       gpg --batch --no-tty --dearmor -o /etc/apt/trusted.gpg.d/pipewire-debian-ubuntu-pipewire-upstream.gpg && \
 
-    mkdir -pm755 /etc/apt/sources.list.d && \
+    mkdir -p /etc/apt/sources.list.d && \
+    chmod 0755 /etc/apt/sources.list.d && \
     echo "deb https://ppa.launchpadcontent.net/pipewire-debian/pipewire-upstream/ubuntu $(grep UBUNTU_CODENAME= /etc/os-release | cut -d= -f2 | tr -d '\"') main" \
       > "/etc/apt/sources.list.d/pipewire-debian-ubuntu-pipewire-upstream-$(grep UBUNTU_CODENAME= /etc/os-release | cut -d= -f2 | tr -d '\"').list" && \
 
-    mkdir -pm755 /etc/apt/sources.list.d && \ 
+    mkdir -p /etc/apt/sources.list.d && \ 
+    chmod 0755 /etc/apt/sources.list.d && \ 
     echo "deb https://ppa.launchpadcontent.net/pipewire-debian/wireplumber-upstream/ubuntu $(grep UBUNTU_CODENAME= /etc/os-release | cut -d= -f2 | tr -d '\"') main" \
       > "/etc/apt/sources.list.d/pipewire-debian-ubuntu-wireplumber-upstream-$(grep UBUNTU_CODENAME= /etc/os-release | cut -d= -f2 | tr -d '\"').list" && \
 
@@ -72,11 +74,9 @@ RUN apt-get update && \
 # COPY 
 # ---
 
-# supervisord config
 COPY ./config/supervisord.conf \
       /etc/supervisord.conf
 
-# pipewire pulse module configuration
 COPY ./config/module_protocol_pulse.conf \
       /usr/share/pipewire/pipewire.conf.d/module_protocol_pulse.conf
 
