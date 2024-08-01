@@ -77,8 +77,8 @@ RUN apt-get update && \
 COPY ./config/supervisord.conf \
       /etc/supervisord.conf
 
-COPY ./config/* \
-      /usr/share/pipewire/pipewire.conf.d/
+COPY ./config/module_protocol_pulse.conf \
+      /usr/share/pipewire/pipewire.conf.d/module_protocol_pulse.conf
 
 # Setup 
 # ---
