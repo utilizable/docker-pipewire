@@ -62,7 +62,8 @@ RUN apt-get update && \
         gir1.2-wp-0.4 \
         dbus-user-session \
         dbus-x11 \
-        supervisor && \
+        supervisor \
+        iproute2 && \
 
     # Clean up unnecessary files
     apt-get clean && \ 
