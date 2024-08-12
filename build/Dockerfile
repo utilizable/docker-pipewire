@@ -86,7 +86,7 @@ COPY ./config/supervisord.conf \
       /etc/supervisord.conf
 
 COPY ./config/module_protocol_pulse.conf \
-      /usr/share/pipewire/
+      /usr/share/pipewire/*
 
 # Setup 
 # ---
