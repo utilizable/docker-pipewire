@@ -6,7 +6,10 @@
 # ├─utilizable/docker-fakeroot
 #   ├─utilizable/docker-pipewire
 
-FROM ghcr.io/utilizable/docker-fakeroot:1.10.0
+ARG DISTRIBUTION=24.04
+FROM ubuntu:${DISTRIBUTION}
+
+#FROM ghcr.io/utilizable/docker-fakeroot:1.10.0
 
 # Labels
 # ---
@@ -18,6 +21,7 @@ LABEL description="Ubuntu pipewire docker container" \
 # PipeWire and WirePlumber 
 # ---
 
+USER 0
 RUN apt-get update && \
     apt-get install --no-install-recommends -y \
         software-properties-common \
