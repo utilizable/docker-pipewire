@@ -22,6 +22,7 @@ LABEL description="Ubuntu pipewire docker container" \
 # ---
 
 USER 0
+
 RUN apt-get update && \
     apt-get install --no-install-recommends -y \
         software-properties-common \
@@ -74,6 +75,8 @@ RUN apt-get update && \
 
     # Create directory for user specyfic pipewire configuration
     mkdir /usr/share/pipewire/pipewire.conf.d/ 
+
+USER 1000
 
 # Copy 
 # ---
