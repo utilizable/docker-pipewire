@@ -6,7 +6,7 @@
 # ├─utilizable/docker-fakeroot
 #   ├─utilizable/docker-pipewire
 
-FROM ghcr.io/utilizable/docker-fakeroot:1.1.0
+FROM ghcr.io/utilizable/docker-fakeroot:1.7.0
 
 # Labels
 # ---
