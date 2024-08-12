@@ -85,8 +85,8 @@ USER 1000
 COPY ./config/supervisord.conf \
       /etc/supervisord.conf
 
-COPY ./config/module_protocol_pulse.conf \
-      /usr/share/pipewire/*
+COPY ./config/* \
+      /usr/share/pipewire/pipewire.conf.d/
 
 # Setup 
 # ---
