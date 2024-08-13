@@ -10,12 +10,6 @@ on:
   # Trigger major on default ref;
   workflow_dispatch:
 
-# Allow repository modyfication;
-permissions:
-  contents: write
-  pull-requests: write
-  packages: write
-
 jobs:
 
   # -----------------
@@ -26,6 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       dockerfilepath: ${{ steps.find-dockerfile.outputs.DOCKERFILE_PATH }}
+      dockerfiledir: ${{ steps.find-dockerfile.outputs.DOCKERFILE_DIR }}
     steps:
       - uses: actions/checkout@v4
 
@@ -34,10 +29,10 @@ jobs:
         name: Find Dockerfile
         id: find-dockerfile
         run: |
-          DOCKERFILE_PATH=$(find ${PWD} -name "Dockerfile") && \
-          if [ -z "$DOCKERFILE_PATH" ]; then exit 1; fi && \
-          echo "${DOCKERFILE_PATH}" && \
+          DOCKERFILE_PATH=$(find ${PWD} -name "Dockerfile.*");
+          if [ -z "${DOCKERFILE_PATH}" ]; then exit 1; fi
           echo "DOCKERFILE_PATH=${DOCKERFILE_PATH}" >> $GITHUB_OUTPUT
+          echo "DOCKERFILE_DIR=${DOCKERFILE_PATH/\/Dockerfile.*}" >> $GITHUB_OUTPUT
 
   # -----------------
   # Docker linter
@@ -47,20 +42,21 @@ jobs:
      name: "Lint: Dockerfile"
      runs-on: ubuntu-latest
      steps:
-       - uses: utilizable/action-store/.github/actions/linting/docker/hadolint@develop
+       - uses: utilizable/github-actions/.github/actions/linting/docker/hadolint@develop
          with:
            file: ${{ needs.prepare.outputs.dockerfilepath }}
-  
+           
   # -----------------
   # Building & Pushing to Github registry 
   # -----------------
   github:
     name: "Build: Github Package"
-    needs: [ hadolint ]
+    needs: [ prepare, hadolint ]
     runs-on: ubuntu-latest
     steps:
       - uses: utilizable/github-actions/.github/actions/building/docker/github@develop
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          context: ./build
+          token: ${{ secrets.token || github.token }}
+          context: ${{ needs.prepare.outputs.dockerfiledir }}
           file: ${{ needs.prepare.outputs.dockerfilepath }}
+          buildkit: 'false'
