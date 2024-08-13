@@ -9,7 +9,7 @@
 #
 ############################################################
 
-FROM ghcr.io/utilizable/docker-fakeroot:2.0.0
+FROM ghcr.io/utilizable/docker-base:2.0.0
 
 # Labels
 # ---
