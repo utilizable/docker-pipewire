@@ -5,7 +5,7 @@
 # STRUCTURE:
 #
 # ├─utilizable/docker-base
-#   ├─utilizable/...
+#   ├─utilizable/docker-pipewire
 #
 ############################################################
 
