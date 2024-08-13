@@ -12,15 +12,11 @@
 FROM ghcr.io/utilizable/docker-base:2.0.0
 
 # Labels
-# ---
-
 LABEL description="Ubuntu pipewire docker container" \
       maintainer="Utilizable http://github.com/utilizable" \
       org.opencontainers.image.source="https://github.com/utilizable/docker-pipewire"
 
 # PipeWire and WirePlumber 
-# ---
-
 RUN \
     echo "**** Update apt database ****" \
         && dpkg --add-architecture i386 \
@@ -84,8 +80,6 @@ RUN \
     #mkdir /usr/share/pipewire/pipewire.conf.d/ 
 
 # Copy 
-# ---
-
 COPY ./config/supervisord.conf \
       /etc/supervisord.conf
 
@@ -93,17 +87,14 @@ COPY ./config/* \
       /usr/share/pipewire/pipewire.conf.d/
 
 # Setup 
-# ---
-
-ENV PIPEWIRE_LATENCY="32/48000" \
-    DISPLAY=":0" \
-    DISABLE_RTKIT="y" \
-    XDG_RUNTIME_DIR="/tmp/" \
-    PIPEWIRE_RUNTIME_DIR="/tmp/" \
-    PULSE_RUNTIME_PATH="/tmp/"
+ENV \
+  PIPEWIRE_LATENCY="32/48000" \
+  DISPLAY=":0" \
+  DISABLE_RTKIT="y" \
+  XDG_RUNTIME_DIR="/tmp/" \
+  PIPEWIRE_RUNTIME_DIR="/tmp/" \
+  PULSE_RUNTIME_PATH="/tmp/"
 
 # Execute 
-# ---
-
 ENTRYPOINT [ "/bin/bash", "-c" ]
 CMD [ "dbus-run-session -- /usr/bin/supervisord" ]
