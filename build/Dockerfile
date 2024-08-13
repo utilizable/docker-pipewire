@@ -1,15 +1,15 @@
 ############################################################
 # Copyright (c) 2024 Utilizable 
 # Released under the MIT license
-############################################################
+# ----------------------------------------------------------
+# STRUCTURE:
 #
-# ├─utilizable/docker-fakeroot
-#   ├─utilizable/docker-pipewire
+# ├─utilizable/docker-base
+#   ├─utilizable/...
+#
+############################################################
 
-ARG DISTRIBUTION=24.04
-FROM ubuntu:${DISTRIBUTION}
-
-#FROM ghcr.io/utilizable/docker-fakeroot:1.10.0
+FROM ghcr.io/utilizable/docker-fakeroot:2.0.0
 
 # Labels
 # ---
@@ -21,30 +21,37 @@ LABEL description="Ubuntu pipewire docker container" \
 # PipeWire and WirePlumber 
 # ---
 
-USER 0
-
-RUN apt-get update && \
-    apt-get install --no-install-recommends -y \
-        software-properties-common \
-        curl && \
-
-    mkdir -p /etc/apt/trusted.gpg.d && \
-    chmod 0755 /etc/apt/trusted.gpg.d && \
-    curl -fsSL "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xFC43B7352BCC0EC8AF2EEB8B25088A0359807596" | \
-      gpg --batch --no-tty --dearmor -o /etc/apt/trusted.gpg.d/pipewire-debian-ubuntu-pipewire-upstream.gpg && \
-
-    mkdir -p /etc/apt/sources.list.d && \
-    chmod 0755 /etc/apt/sources.list.d && \
-    echo "deb https://ppa.launchpadcontent.net/pipewire-debian/pipewire-upstream/ubuntu $(grep UBUNTU_CODENAME= /etc/os-release | cut -d= -f2 | tr -d '\"') main" \
-      > "/etc/apt/sources.list.d/pipewire-debian-ubuntu-pipewire-upstream-$(grep UBUNTU_CODENAME= /etc/os-release | cut -d= -f2 | tr -d '\"').list" && \
-
-    mkdir -p /etc/apt/sources.list.d && \ 
-    chmod 0755 /etc/apt/sources.list.d && \ 
-    echo "deb https://ppa.launchpadcontent.net/pipewire-debian/wireplumber-upstream/ubuntu $(grep UBUNTU_CODENAME= /etc/os-release | cut -d= -f2 | tr -d '\"') main" \
-      > "/etc/apt/sources.list.d/pipewire-debian-ubuntu-wireplumber-upstream-$(grep UBUNTU_CODENAME= /etc/os-release | cut -d= -f2 | tr -d '\"').list" && \
-
-    apt-get update && \
-    apt-get install --no-install-recommends -y \
+RUN \
+    echo "**** Update apt database ****" \
+        && dpkg --add-architecture i386 \
+        && apt-get update \
+    && \
+    echo "**** Install Tools ****" \
+       && apt-get install --no-install-recommends -y \          
+         software-properties-common \
+         curl 
+    && \
+    echo "**** Pipewire - PPA ****" \
+      && mkdir -p /etc/apt/trusted.gpg.d \
+      && chmod 0755 /etc/apt/trusted.gpg.d \
+      && curl -fsSL "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xFC43B7352BCC0EC8AF2EEB8B25088A0359807596" | \
+           gpg --batch --no-tty --dearmor -o /etc/apt/trusted.gpg.d/pipewire-debian-ubuntu-pipewire-upstream.gpg && \
+    && \
+    echo "**** Pipewire - Sources ****" \      
+      && mkdir -p /etc/apt/sources.list.d \
+      && chmod 0755 /etc/apt/sources.list.d \
+      && echo "deb https://ppa.launchpadcontent.net/pipewire-debian/pipewire-upstream/ubuntu $(grep UBUNTU_CODENAME= /etc/os-release | cut -d= -f2 | tr -d '\"') main" \
+           > "/etc/apt/sources.list.d/pipewire-debian-ubuntu-pipewire-upstream-$(grep UBUNTU_CODENAME= /etc/os-release | cut -d= -f2 | tr -d '\"').list" \
+    && \
+    echo "**** Wireplumber - Sources ****" \      
+      && mkdir -p /etc/apt/sources.list.d && \ 
+      && chmod 0755 /etc/apt/sources.list.d && \ 
+      && echo "deb https://ppa.launchpadcontent.net/pipewire-debian/wireplumber-upstream/ubuntu $(grep UBUNTU_CODENAME= /etc/os-release | cut -d= -f2 | tr -d '\"') main" \
+           > "/etc/apt/sources.list.d/pipewire-debian-ubuntu-wireplumber-upstream-$(grep UBUNTU_CODENAME= /etc/os-release | cut -d= -f2 | tr -d '\"').list" && \
+    && \
+    echo "**** Pipewire - Installation ****" \     
+      && apt-get update \
+      && apt-get install --no-install-recommends -y \
         pipewire \
         pipewire-alsa \
         pipewire-audio-client-libraries \
@@ -63,21 +70,18 @@ RUN apt-get update && \
         dbus-user-session \
         dbus-x11 \
         supervisor \
-        iproute2 && \
-
-    # Clean up unnecessary files
-    apt-get clean && \ 
-    rm -rf \
-      /var/lib/apt/lists/* \ 
-      /var/cache/debconf/* \
-      /var/log/* \
-      /tmp/* \
-      /var/tmp/* && \
+        iproute2 \
+    && \
+    echo "**** Section cleanup ****" \
+       && apt-get clean autoclean -y \
+       && apt-get autoremove -y \
+       && rm -rf \
+           /var/lib/apt/lists/* \
+           /var/tmp/* \
+           /tmp/*
 
     # Create directory for user specyfic pipewire configuration
-    mkdir /usr/share/pipewire/pipewire.conf.d/ 
-
-USER 1000
+    #mkdir /usr/share/pipewire/pipewire.conf.d/ 
 
 # Copy 
 # ---
