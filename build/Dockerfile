@@ -47,7 +47,7 @@ RUN \
       && mkdir -p /etc/apt/sources.list.d && \ 
       && chmod 0755 /etc/apt/sources.list.d && \ 
       && echo "deb https://ppa.launchpadcontent.net/pipewire-debian/wireplumber-upstream/ubuntu $(grep UBUNTU_CODENAME= /etc/os-release | cut -d= -f2 | tr -d '\"') main" \
-           > "/etc/apt/sources.list.d/pipewire-debian-ubuntu-wireplumber-upstream-$(grep UBUNTU_CODENAME= /etc/os-release | cut -d= -f2 | tr -d '\"').list" && \
+           > "/etc/apt/sources.list.d/pipewire-debian-ubuntu-wireplumber-upstream-$(grep UBUNTU_CODENAME= /etc/os-release | cut -d= -f2 | tr -d '\"').list" \
     && \
     echo "**** Pipewire - Installation ****" \     
       && apt-get update \
