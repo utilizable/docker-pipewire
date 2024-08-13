@@ -16,10 +16,10 @@ RUN \
       && apt-get update \
     && \
     echo "**** Install Tools ****" \
-      && apt-get install -y \          
+      && apt-get install --no-install-recommends -y \          
          software-properties-common \
-         curl 
-RUN \
+         curl \
+    && \
     echo "**** Pipewire - PPA ****" \
       && mkdir -p /etc/apt/trusted.gpg.d \
       && chmod 0755 /etc/apt/trusted.gpg.d \
