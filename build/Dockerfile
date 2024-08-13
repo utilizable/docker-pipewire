@@ -29,7 +29,7 @@ RUN \
     echo "**** Install Tools ****" \
        && apt-get install --no-install-recommends -y \          
          software-properties-common \
-         curl 
+         curl \
     && \
     echo "**** Pipewire - PPA ****" \
       && mkdir -p /etc/apt/trusted.gpg.d \
