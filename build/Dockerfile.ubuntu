@@ -17,11 +17,11 @@ LABEL description="Ubuntu pipewire docker container" \
 
 RUN \
     echo "**** Update apt database ****" \
-        && dpkg --add-architecture i386 \
-        && apt-get update \
+      && dpkg --add-architecture i386 \
+      && apt-get update \
     && \
     echo "**** Install Tools ****" \
-       && apt-get install --no-install-recommends -y \          
+      && apt-get install --no-install-recommends -y \          
          software-properties-common \
          curl \
     && \
