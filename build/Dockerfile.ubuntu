@@ -59,7 +59,6 @@ RUN \
         dbus-user-session \
         dbus-x11 \
         supervisor \
-        iproute2 \
     && \
     echo "**** Section cleanup ****" \
        && apt-get clean autoclean -y \
